@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button</title>
+
+    <script src="https://cdn.jsdelivr.net/gh/PsychoGoldfishNG/NewgroundsIO-JS@8c72515/dist/NewgroundsIO.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="lib/text.js"></script>
+</head>
+<body style="background-color: black;">
+    <div class="gameWindow" style="width: 512px; height: 512px; position: absolute; left: calc(50vw - 256px); top: calc(50vh - 256px); background-image: url(img/room.png); overflow: hidden;">
+        <div class="game">
+            <div class="player" style="width: 8px; height: 16px; position: absolute; background-image: url(img/sheet1.png); background-position: 56px 80px; z-index: 1000;"></div>
+            <div class="buttonCont" style="width: 64px; height: 32px; position: absolute; bottom: 64px; left: 224px;">
+                <div class="button" style="width: 64px; height: 16px; position: absolute; background-image: url(img/sheet1.png); background-position: 128px 80px;"></div>
+                <div class="buttonBase" style="width: 64px; height: 16px; position: absolute; background-image: url(img/sheet1.png); background-position: 128px 64px; top: 16px; z-index: 1002;"></div>
+            </div>
+            <div class="IE" style="width: 8px; height: 16px; background-image: url(img/sheet1.png); background-position: 64px 80px; display: none; position: absolute;"></div>
+            <div class="counter" style="position: absolute; width: 512px; height: 16px; bottom: 144px;"></div>
+            <div class="theDoor" style="position: absolute; width: 16px; height: 16px; background-image: url(img/sheet1.png); background-position: 16px 128px; left: 128px; bottom: 80px;"></div>
+            <div style="position: absolute; width: 16px; height: 16px; background-image: url(img/sheet1.png); background-position: 32px 112px; left: 128px; bottom: 64px;"></div>
+            <div class="woke" style="position: absolute; width: 16px; height: 32px; background-image: url(img/woke.png); right: 80px; bottom: 64px;"></div>
+            <div class="comboItem" style="position: absolute; width: 96px; height: 48px; background-image: url(img/sheet1.png); background-position: 128px 128px; left: 208px; bottom: 112px;"></div>
+            <div class="combo" style="width: 512px; height: 16px; position: absolute; bottom: 128px;"></div>
+            <div class="carpet" style="width: 192px; height: 16px; position: absolute; bottom: 64px; left: 160px; background-image: url(img/carpet.png); z-index: 1001;"></div>
+            <div class="mat" style="width: 16px; height: 16px; position: absolute; bottom: 64px; left: 128px; background-image: url(img/sheet1.png); background-position: 48px 80px; z-index: 1001;"></div>
+        </div>
+        <div class="shop" style="display: none; z-index: 10000; position: absolute; background-color: black; width: 512px; height: 512px;">
+            <div class="shopEyes" style="width: 128px; height: 64px; position: absolute; left: 64px; top: 128px;">
+                <div class="leftEye" style="width: 64px; height: 64px; position: absolute; background-image: url(img/shop/eyes.png);"></div>
+                <div class="rightEye" style="width: 64px; height: 64px; position: absolute; left: 64px; background-image: url(img/shop/eyes.png);"></div>
+            </div>
+            <div class="shopDoor" style="width: 256px; height: 512px; position: absolute; background-image: url(img/shop/door.png);"></div>
+            <div class="shopImg" style="width: 256px; height: 256px; position: absolute; left: 256px;"></div>
+            <div class="shopText" style="width: 256px; height: 256px; position: absolute; left: 256px; top: 256px;"></div>
+            <div class="shopCont" style="width: 256px; height: max-content; position: absolute; left: 256px; bottom: 0px;"></div>
+            <div class="shopBubble" style="width: 128px; height: max-content; position: absolute; left: 64px; top: 192px;">
+                <div style="width: 128px; height: 32px; background-image: url(img/sheet1.png); background-position: 128px 48px;"></div>
+                <div class="shopTalk" style="background-color: white; width: 128px; height: max-content;"></div>
+                <div style="width: 128px; height: 16px; background-image: url(img/sheet1.png); background-position: 128px 16px;"></div>
+            </div>
+            <div class="note" style="width: 32px; height: 32px; position: absolute; left: 128px; top: 176px; background-image: url(img/sheet1.png); background-position: 32px 80px; display: none;"></div>
+        </div>
+        <div class="credits" style="position: absolute; z-index: 100001; width: 512px; height: 512px; display: none;"><div class="creditsText"></div></div>
+        <div class="touchButt" style="position: absolute; z-index: 200000; width: 512px; height: 512px; display: none;">
+            <div class="touchButtA" style="width: 64px; height: 64px; position: absolute; left: 96px; bottom: 0px; background-color: #991515; border-radius: 32px;"><div style="margin: auto; margin-top: 24px; width: 8px; height: 16px; background-image: url(img/sheet1.png); background-position: 64px 64px;"></div></div>
+            <div class="touchButtB" style="width: 64px; height: 64px; position: absolute; left: 160px; bottom: 0px; background-color: #991515; border-radius: 32px;"><div style="margin: auto; margin-top: 24px; width: 8px; height: 16px; background-image: url(img/sheet1.png); background-position: 56px 64px;"></div></div>
+            <div class="touchButtL" style="width: 64px; height: 64px; position: absolute; right: 160px; bottom: 0px; background-color: #991515; border-radius: 32px;"><div style="margin: auto; margin-top: 24px; width: 16px; height: 16px; background-image: url(img/sheet1.png); background-position: 48px 64px;"></div></div>
+            <div class="touchButtR" style="width: 64px; height: 64px; position: absolute; right: 96px; bottom: 0px; background-color: #991515; border-radius: 32px;"><div style="margin: auto; margin-top: 24px; width: 16px; height: 16px; background-image: url(img/sheet1.png); background-position: 48px 64px; transform: scaleX(-1);"></div></div>
+        </div>
+        <div class="focus" style="position: absolute; z-index: 10000000; width: 512px; height: 512px; background-color: #000000dd; user-select: all; display: block; padding-top: 128px;" onclick="this.style.display = 'none'; music[0].play(); music[1].play()"></div>
+        <script>document.querySelector(".focus").innerHTML = renderStrings(["out_of_focus", "click_or_tap_to_focus"])</script>
+    </div>
+
+    <div class="loadZoneDeluxe" style="position: absolute; width: 512px; height: 512px; top: calc(50% - 256px); left: calc(50% - 256px); z-index: 1000000; background-color: black; padding-top: 128px;"></div>
+    <script>
+        let loaded = 0
+        let loadLoop = setInterval(function(){
+            heightText = ""
+            let toload = 28
+
+            document.querySelector(".loadZoneDeluxe").innerHTML = renderStrings(["loading,,,", loaded + "_of_" + (toload-(mobile*10))])
+
+            if (loaded >= toload-(mobile*10)){
+                setTimeout(function(){
+                    document.querySelector(".loadZoneDeluxe").style.display = "none"
+                }, 500)
+                clearInterval(loadLoop)
+                return
+            }
+        }, 10)
+    </script>
+    <div class="loadZone" style="display: none;">
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/click.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/fear.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/jump.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/land.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/nope.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/open.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/shop.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/slam.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/ting.mp3"></audio>
+        <audio oncanplaythrough="loaded++" preload="auto" src="sfx/yeah.mp3"></audio>
+        <img onload="loaded++" src="img/letter/segment/_.png">
+        <img onload="loaded++" src="img/letter/segment/-.png">
+        <img onload="loaded++" src="img/letter/segment/cha.png">
+        <img onload="loaded++" src="img/letter/segment/num.png">
+        <img onload="loaded++" src="img/letter/default/&.png">
+        <img onload="loaded++" src="img/letter/default/^.png">
+        <img onload="loaded++" src="img/letter/default/,.png">
+        <img onload="loaded++" src="img/letter/default/_.png">
+        <img onload="loaded++" src="img/letter/default/-.png">
+        <img onload="loaded++" src="img/letter/default/+.png">
+        <img onload="loaded++" src="img/letter/default/cha.png">
+        <img onload="loaded++" src="img/letter/default/num.png">
+        <img onload="loaded++" src="img/shop/door.png">
+        <img onload="loaded++" src="img/shop/eyes.png">
+        <img onload="loaded++" src="img/shop/yourEyes.png">
+        <img onload="loaded++" src="img/logo.png">
+        <img onload="loaded++" src="img/room.png">
+        <img onload="loaded++" src="img/sheet1.png">
+    </div>
+
+    <script src="lib/KBnM.js"></script>
+    <script src="lib/credits.js"></script>
+    <script src="nginit.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
