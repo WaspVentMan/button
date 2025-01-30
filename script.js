@@ -4,12 +4,17 @@ let saveData = localStorage.getItem("BUTTON")
 if (saveData != null){
     player = JSON.parse(saveData)
     player.pos = [252, 1024]
-    player.vel = [0, 0]
+    player.vel = [0, -10]
     player.fear = false
-} else {
+    player.combo = 0
+    player.loads++
+    player.countDisp = player.count
+}
+
+if (player.loads == undefined){
     player = {
         "pos": [252, 1024],
-        "vel": [0, 0],
+        "vel": [0, -10],
         "count": 0,
         "countDisp": 0,
         "countDispTick": false,
@@ -18,6 +23,9 @@ if (saveData != null){
         "power": 1,
         "clone": [],
         "fear": false,
+        "loads": 0,
+        "spent": 0,
+        "startTime": Date.now(),
         "control": {
             "jump": false,
             "move": false
@@ -31,6 +39,8 @@ if (saveData != null){
             "vel": 0
         },
         "upgrades": {
+            "sofa": {"unlocked": false, "active": true},
+            "vending": {"unlocked": false, "active": true},
             "mat": {"unlocked": false, "active": true},
             "carpet": {"unlocked": false, "active": true},
             "airControl": {"unlocked": false, "active": true},
@@ -41,7 +51,6 @@ if (saveData != null){
 }
 
 let stuckcounter = 0
-let startTime = Date.now()
 let music = [new Audio("sfx/shop.mp3"), new Audio("sfx/fear.mp3")]
 music[0].loop = true
 music[1].loop = true
@@ -118,6 +127,18 @@ function renderItems(){
     } else {
         document.querySelector(".mat").style.display = 'none'
     }
+
+    if (player.upgrades.sofa.unlocked){
+        document.querySelector(".sofa").style.display = 'block'
+    } else {
+        document.querySelector(".sofa").style.display = 'none'
+    }
+
+    if (player.upgrades.vending.unlocked){
+        document.querySelector(".vend").style.display = 'block'
+    } else {
+        document.querySelector(".vend").style.display = 'none'
+    }
 }
 
 function interactPrompt(){
@@ -137,6 +158,11 @@ let tick = Date.now()
 setInterval(function(){
     let d = (Date.now() - tick) / 1000
     tick = Date.now()
+
+    if (key.f && !held.f && window.location != window.parent.location){
+        held.f = true
+        window.open(window.location.href, '_blank').focus()
+    }
 
     if (player.fear){document.querySelector(".counter").innerHTML = renderString("error   ", font="segment")}
     if (player.fear && player.upgrades.combo.active){document.querySelector(".combo").innerHTML = renderString("error   ", font="segment")}
@@ -169,7 +195,7 @@ setInterval(function(){
             player.fear = true
             if (!offline){
                 NGIO.postScore(14484, 1, function(){})
-                NGIO.postScore(14485, Date.now()-startTime, function(){})
+                NGIO.postScore(14485, Date.now()-player.startTime, function(){})
             }
             unlockMedal(82727)
             document.querySelector(".shopEyes").style.display = "none"
@@ -202,11 +228,11 @@ setInterval(function(){
         if (key.z && !held.z){
             held.z = true
             if (player.fear){
-                sfx("sfx/nope.mp3", 50)
-            } else if (player.count >= Math.floor(((player.power**2)**1.1)/(player.upgrades.mat.unlocked+1)) && player.shop.cursor == 0){
-                player.count -= Math.floor(((player.power**2)**1.1)/(player.upgrades.mat.unlocked+1))
+                sfx("sfx/nope.mp3", 25)
+            } else if (player.count >= Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1)) && player.shop.cursor == 0){
+                player.count -= Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1))
                 player.power = Math.ceil(player.power*1.1)
-                sfx("sfx/yeah.mp3", 50)
+                sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
                 if (player.count >= player.power*10){
                     setTimeout(function(){held.z = false}, 100)
@@ -214,40 +240,50 @@ setInterval(function(){
             } else if (player.count >= 50 && player.shop.cursor == 1 && !player.upgrades.combo.unlocked){
                 player.count -= 50
                 player.upgrades.combo.unlocked = true
-                sfx("sfx/yeah.mp3", 50)
+                sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 500 && player.shop.cursor == 2 && !player.upgrades.airControl.unlocked){
                 player.count -= 500
                 player.upgrades.airControl.unlocked = true
-                sfx("sfx/yeah.mp3", 50)
+                sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 10000 && player.shop.cursor == 3 && !player.upgrades.carpet.unlocked){
                 player.count -= 10000
                 player.upgrades.carpet.unlocked = true
-                sfx("sfx/yeah.mp3", 50)
+                sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 49999 && player.shop.cursor == 4 && !player.upgrades.mat.unlocked){
                 player.count -= 49999
                 player.upgrades.mat.unlocked = true
-                sfx("sfx/yeah.mp3", 50)
+                sfx("sfx/yeah.mp3", 25)
+                setTimeout(function(){player.countDispTick = true}, 100)
+            } else if (player.count >= 100000 && player.shop.cursor == 5 && !player.upgrades.sofa.unlocked){
+                player.count -= 100000
+                player.upgrades.sofa.unlocked = true
+                sfx("sfx/yeah.mp3", 25)
+                setTimeout(function(){player.countDispTick = true}, 100)
+            } else if (player.count >= 200000 && player.shop.cursor == 6 && !player.upgrades.vending.unlocked){
+                player.count -= 200000
+                player.upgrades.vending.unlocked = true
+                sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else {
-                sfx("sfx/nope.mp3", 50)
+                sfx("sfx/nope.mp3", 25)
             }
         }
 
         if (key.ArrowLeft && !held.ArrowLeft && player.shop.cursor > 0){
             held.ArrowLeft = true
             player.shop.cursor--
-            sfx("sfx/click.mp3", 50)
-        } else if (key.ArrowRight && !held.ArrowRight && player.shop.cursor < 4){
+            sfx("sfx/click.mp3", 10)
+        } else if (key.ArrowRight && !held.ArrowRight && player.shop.cursor < 6){
             held.ArrowRight = true
             player.shop.cursor++
-            sfx("sfx/click.mp3", 50)
+            sfx("sfx/click.mp3", 10)
         } else if ((key.ArrowRight && !held.ArrowRight) || (key.ArrowLeft && !held.ArrowLeft)){
             held.ArrowLeft  = key.ArrowLeft
             held.ArrowRight = key.ArrowRight
-            sfx("sfx/nope.mp3", 50)
+            sfx("sfx/nope.mp3", 10)
         }
 
         if (!player.fear){
@@ -259,7 +295,7 @@ setInterval(function(){
                     } else {
                         document.querySelector(".shopText").innerHTML = renderStrings(["", "the shopkeep said that they", "can tweak the button power from", "behind the door.", "", "they weren't lying, they really", "can increase the power."])
                     }
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["power upgrade", "fer " + Math.floor(((player.power**2)**1.1)/(player.upgrades.mat.unlocked+1))])
+                    document.querySelector(".shopTalk").innerHTML = renderStrings(["power upgrade", "fer " + Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1))])
                     break
                 case 1:
                     document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/combo.png)"
@@ -295,6 +331,24 @@ setInterval(function(){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["welcome mat", "fer 49999"])
                     } else {
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "welcome mat"])
+                    }
+                    break
+                case 5:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "an old sofa.", "it's similar to the ones", "i'd see in the charity shops", "back in... in...", "", "i hit my head pretty hard.", "i'll remember in due time.", "", "knowing there's somewhere", "to sit down and rest", "will motivate me to", "hit the button harder!"])
+                    if (!player.upgrades.sofa.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["fancy sofa", "fer 100000"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "sofa"])
+                    }
+                    break
+                case 6:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "an old vending machine.", "the power cable is busted.", "", "the idea of being able to have a", "nice drink, (even if not cold)", "is a nice motivator for me to", "hit the button even harder!", "", "i have no idea what the hell", "\"dr. pipis\" is though.", "shopkeep says it's good."])
+                    if (!player.upgrades.vending.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["vending machine", "fer 200000"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "vending machine"])
                     }
                     break
             }
@@ -434,7 +488,8 @@ setInterval(function(){
         player.button.vel = -player.button.vel
 
         let damage = Math.floor(player.power*(((player.combo**1.1)/5)+1))
-        player.count += damage
+        if (player.upgrades.vending.unlocked){damage*=2}
+        if (player.upgrades.sofa.unlocked){damage*=2}
 
         sfx("sfx/click.mp3", 50)
         if (player.upgrades.combo.unlocked && player.upgrades.combo.active){
@@ -445,7 +500,7 @@ setInterval(function(){
             }
         }
 
-        setTimeout(function(){player.countDispTick = true}, 500)
+        setTimeout(function(){player.count += damage; player.countDispTick = true}, 500)
     } else if (player.button.depth != 0){
         player.button.vel -= 1
     }
@@ -541,7 +596,7 @@ setInterval(function(){
     } else if (player.pos[0] + (player.vel[0]*d) > 440){
         player.vel[0] = 10
         player.pos[0] = 440 - player.vel[0]*d
-    } else if (player.upgrades.airControl.unlocked && player.upgrades.airControl.active){
+    } else if (player.upgrades.airControl.unlocked && player.upgrades.airControl.active && player.vel[1] > -10){
         if (key.ArrowLeft && player.control.move && player.stun < Date.now()){
             if (player.vel[0] > -60){
                 player.vel[0] -= 200*d
