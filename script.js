@@ -70,11 +70,8 @@ function sfx(sound, vol = 100){
 }
 
 function buttonColl(y){
-    if (player.vel[1] < -1){
-        sfx("sfx/land.mp3", 25)
-    }
-
     if (player.vel[1] < -2){
+        sfx("sfx/land.mp3", 25)
         player.control.jump = false
         player.control.move = false
         player.button.vel = -(player.vel[1]*1.1)
@@ -133,13 +130,16 @@ function interactPrompt(){
     }
 }
 
-document.querySelector(".shopCont").innerHTML = renderStrings(["z_to_buy___x_to_leave", "left_and_right_to_change_items"])
+document.querySelector(".shopCont").innerHTML = renderStrings(["z to buy   x to leave", "left and right to change items"])
 renderItems()
 
 let tick = Date.now()
 setInterval(function(){
     let d = (Date.now() - tick) / 1000
     tick = Date.now()
+
+    if (player.fear){document.querySelector(".counter").innerHTML = renderString("error   ", font="segment")}
+    if (player.fear && player.upgrades.combo.active){document.querySelector(".combo").innerHTML = renderString("error   ", font="segment")}
 
     if (document.querySelector(".focus").style.display == 'block'){return}
     if (document.querySelector(".loadZoneDeluxe").style.display == 'block'){return}
@@ -174,7 +174,7 @@ setInterval(function(){
             unlockMedal(82727)
             document.querySelector(".shopEyes").style.display = "none"
             document.querySelector(".shopBubble").style.display = "none"
-            document.querySelector(".shopText").innerHTML = renderStrings(["the_shopkeeper_is_gone,", "", "there_is_a_note_on_the_door,", "", "+thank_you,,,_and_sorry+", "", "something_feels_very_wrong,,,"])
+            document.querySelector(".shopText").innerHTML = renderStrings(["the shopkeeper is gone.", "", "there is a note on the door.", "", "\"thank you... and sorry\"", "", "something feels very wrong..."])
             music[1].currentTime = 0
             music[1].volume = 0.2
             music[0].volume = 0
@@ -250,62 +250,64 @@ setInterval(function(){
             sfx("sfx/nope.mp3", 50)
         }
 
-        switch(player.shop.cursor){
-            case 0:
-                document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/power.png)"
-                if (player.power == 1){
-                    document.querySelector(".shopText").innerHTML = renderStrings(["", "the_shopkeep_said_that_they", "can_tweak_the_button_power_from", "behind_the_door", "", "i_hope_they_aren+t_lying"])
-                } else {
-                    document.querySelector(".shopText").innerHTML = renderStrings(["", "the_shopkeep_said_that_they", "can_tweak_the_button_power_from", "behind_the_door", "", "they_weren+t_lying,_they_really", "can_increase_the_power"])
-                }
-                document.querySelector(".shopTalk").innerHTML = renderStrings(["power_upgrade", "fer_" + Math.floor(((player.power**2)**1.1)/(player.upgrades.mat.unlocked+1))])
-                break
-            case 1:
-                document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/combo.png)"
-                document.querySelector(".shopText").innerHTML = renderStrings(["", "it+s_a_jumbed_mess_of", "cables_and_machinery", "", "some_of_the_machinery_looks", "suspiciously_organic", "maybe_something_down_here", "likes_making_sick_and", "twisted_machines", "", "it_looks_like_it_can_be", "attached_to_the_counter"])
-                if (!player.upgrades.combo.unlocked){
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["combo_meter", "fer_50"])
-                } else {
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["yer_already", "bought_me", "combo_meter"])
-                }
-                break
-            case 2:
-                document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/air.png)"
-                document.querySelector(".shopText").innerHTML = renderStrings(["", "neither_me_nor_the", "shopkeep_knows_how_it_works", "", "but_it_does_work,,,_right$"])
-                if (!player.upgrades.airControl.unlocked){
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["air_control", "fer_500"])
-                } else {
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["yer_already", "bought", "air_control"])
-                }
-                break
-            case 3:
-                document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
-                document.querySelector(".shopText").innerHTML = renderStrings(["", "a_pair_of_old_fancy_carpets", "", "they_look_like_they+ll", "stop_me_bouncing_about", "when_i_land", "", "i_think_i_had_one", "like_this_at_home"])
-                if (!player.upgrades.carpet.unlocked){
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["carpet", "fer_10000"])
-                } else {
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["yer_already", "bought_me", "carpet"])
-                }
-                break
-            case 4:
-                document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
-                document.querySelector(".shopText").innerHTML = renderStrings(["", "an_old_welcome_mat", "", "the_shopkeep_said_that_they+ll", "give_half_price_power_upgrades", "if_i_buy_this,,,", "", "does_the_counter_even_have", "any_monetary_value$"])
-                if (!player.upgrades.mat.unlocked){
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["welcome_mat", "fer_49999"])
-                } else {
-                    document.querySelector(".shopTalk").innerHTML = renderStrings(["yer_already", "bought_me", "welcome_mat"])
-                }
-                break
+        if (!player.fear){
+            switch(player.shop.cursor){
+                case 0:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/power.png)"
+                    if (player.power == 1){
+                        document.querySelector(".shopText").innerHTML = renderStrings(["", "the shopkeep said that they", "can tweak the button power from", "behind the door.", "", "i hope they aren't lying."])
+                    } else {
+                        document.querySelector(".shopText").innerHTML = renderStrings(["", "the shopkeep said that they", "can tweak the button power from", "behind the door.", "", "they weren't lying, they really", "can increase the power."])
+                    }
+                    document.querySelector(".shopTalk").innerHTML = renderStrings(["power upgrade", "fer " + Math.floor(((player.power**2)**1.1)/(player.upgrades.mat.unlocked+1))])
+                    break
+                case 1:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/combo.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "it's a jumbed mess of", "cables and machinery", "that looks like it can be", "attached to the counter.", "", "some of the machinery looks", "suspiciously organic", "maybe something down here", "likes making sick and", "twisted machines?"])
+                    if (!player.upgrades.combo.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["combo meter", "fer 50"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "combo meter"])
+                    }
+                    break
+                case 2:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/air.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "neither me nor the", "shopkeep knows how it works", "", "but it does work... right?"])
+                    if (!player.upgrades.airControl.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["air control", "fer 500"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought", "air control"])
+                    }
+                    break
+                case 3:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "a pair of old fancy carpets.", "", "they look like they'll", "stop me bouncing about", "when i land.", "", "i think i had one", "like this at home."])
+                    if (!player.upgrades.carpet.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["carpet", "fer 10000"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "carpet"])
+                    }
+                    break
+                case 4:
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "an old welcome mat.", "", "the shopkeep said that they'll", "give half price power upgrades", "if i buy this...", "", "does the counter even have", "any monetary value?"])
+                    if (!player.upgrades.mat.unlocked){
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["welcome mat", "fer 49999"])
+                    } else {
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "welcome mat"])
+                    }
+                    break
+            }
         }
 
         if (player.fear && document.querySelector(".player").style.display != "none"){
             document.querySelector(".note").style.display = "block"
             document.querySelector(".shopEyes").style.display = "none"
         } else if (player.fear){
-            document.querySelector(".shopText").innerHTML = renderStrings(["it+s_you"])
+            document.querySelector(".shopText").innerHTML = renderStrings(["it's you"])
             document.querySelector(".shopEyes").style.display = "block"
-            document.querySelector(".leftEye").style.backgroundImage = "url(shop/yourEyes.png)"
-            document.querySelector(".rightEye").style.backgroundImage = "url(shop/yourEyes.png)"
+            document.querySelector(".leftEye").style.backgroundImage = "url(img/shop/yourEyes.png)"
+            document.querySelector(".rightEye").style.backgroundImage = "url(img/shop/yourEyes.png)"
             unlockMedal(82728)
             if (lastblink < Date.now()-(1000+(320000*Math.random()))){
                 document.querySelector(".leftEye").style.backgroundPosition = "0px 192px"
@@ -333,7 +335,7 @@ setInterval(function(){
                 }
     
                 document.querySelector(".shopEyes").style.top = Math.round(128 + Math.sin(Date.now()/1000)) + "px"
-                document.querySelector(".shopEyes").style.left = Math.round(64 + Math.sin(Date.now()/10000)) + (mobile*128) + "px"
+                document.querySelector(".shopEyes").style.left = Math.round(64 + Math.sin(Date.now()/10000)) + "px"
             }
         } else if (lastblink < Date.now()-(1000+(320000*Math.random()))){
             document.querySelector(".leftEye").style.backgroundPosition = "0px 192px"
@@ -361,7 +363,7 @@ setInterval(function(){
             }
 
             document.querySelector(".shopEyes").style.top = Math.round(128 + Math.sin(Date.now()/1000)) + "px"
-            document.querySelector(".shopEyes").style.left = Math.round(64 + Math.sin(Date.now()/10000)) + (mobile*128) + "px"
+            document.querySelector(".shopEyes").style.left = Math.round(64 + Math.sin(Date.now()/10000)) + "px"
         }
 
         return
@@ -572,12 +574,12 @@ setInterval(function(){
     }
 
     if (player.fear && document.querySelector(".player").style.display == "none"){
-        document.querySelector(".theDoor").style.backgroundPosition = "16px 96px"
+        document.querySelector(".theDoor").style.backgroundPosition = "48px 128px"
     } else if (player.fear){
-        if (document.querySelector(".theDoor").style.backgroundPosition != "32px 96px"){
+        if (document.querySelector(".theDoor").style.backgroundPosition != "48px 112px"){
             sfx("sfx/open.mp3", 10)
         }
-        document.querySelector(".theDoor").style.backgroundPosition = "32px 96px"
+        document.querySelector(".theDoor").style.backgroundPosition = "48px 112px"
     } else if (player.pos[0] > 96 && player.pos[0] < 128){
         document.querySelector(".theDoor").style.transform = "scaleX(-1)"
         document.querySelector(".theDoor").style.backgroundPosition = "16px 128px"
@@ -592,11 +594,11 @@ setInterval(function(){
     }
 
     if (player.fear && player.upgrades.combo.active){
-        document.querySelector(".combo").innerHTML = renderString("error___", font="segment")
+        document.querySelector(".combo").innerHTML = renderString("error   ", font="segment")
     } else if (player.upgrades.combo.active){
-        document.querySelector(".combo").innerHTML = renderString(Math.round(player.combo) + renderDots(3-String(Math.round(player.combo)).length).replaceAll(",", "_") + "combo", font="segment")
+        document.querySelector(".combo").innerHTML = renderString(Math.round(player.combo) + renderDots(3-String(Math.round(player.combo)).length).replaceAll(",", " ") + "combo", font="segment")
     } else {
-        document.querySelector(".combo").innerHTML = renderString(renderDots(8).replaceAll(",", "_"), font="segment")
+        document.querySelector(".combo").innerHTML = renderString(renderDots(8).replaceAll(",", " "), font="segment")
     }
     
     if (!player.upgrades.combo.unlocked){
@@ -606,11 +608,11 @@ setInterval(function(){
     }
 
     if (player.fear){
-        document.querySelector(".counter").innerHTML = renderString("error___", font="segment")
+        document.querySelector(".counter").innerHTML = renderString("error   ", font="segment")
     } else if (player.countDisp == 0){
-        document.querySelector(".counter").innerHTML = renderString(renderDots(8).replaceAll(",", "_"), font="segment")
+        document.querySelector(".counter").innerHTML = renderString(renderDots(8).replaceAll(",", " "), font="segment")
     } else {
-        document.querySelector(".counter").innerHTML = renderString(renderDots(8-String(Math.round(player.countDisp)).length).replaceAll(",", "_") + Math.round(player.countDisp), font="segment")
+        document.querySelector(".counter").innerHTML = renderString(renderDots(8-String(Math.round(player.countDisp)).length).replaceAll(",", " ") + Math.round(player.countDisp), font="segment")
     }
 
     interactPrompt()
