@@ -2,7 +2,7 @@ let offline = true
 
 // Set up the options for NGIO.
 var options = {
-    version: "0.0.0",
+    version: "1.0.0",
     preloadScoreBoards: true,
     preloadMedals: true,
     preloadSaveSlots: true
@@ -11,13 +11,6 @@ var options = {
 NGIO.init("59634:MfeYkipZ", "SHDx88VrkvCD2jz8aSlifw==", options);
 
 let ngLoop = setInterval(function(){
-    let heightText = ""
-
-    for (let x = 0; x < ["ONLINE", "OFFLINE"][offline+0].length; x++){
-        heightText += `<div style="width: 8px; height: 16px; background-image: url(img/letter/${["ONLINE", "OFFLINE"][offline+0][x]}.png);"></div>`
-    }
-
-    //document.querySelector(".con").innerHTML = heightText.toLocaleLowerCase()
     NGIO.getConnectionStatus(function(status) {
         
         switch (status) {

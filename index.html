@@ -27,8 +27,9 @@
             <div class="combo" style="width: 512px; height: 16px; position: absolute; bottom: 128px;"></div>
             <div class="carpet" style="width: 192px; height: 16px; position: absolute; bottom: 64px; left: 160px; background-image: url(img/carpet.png); z-index: 1001;"></div>
             <div class="mat" style="width: 16px; height: 1px; position: absolute; bottom: 64px; left: 128px; background-image: url(img/sheet1.png); background-position: 48px 65px; z-index: 1001;"></div>
-            <div class="vend" style="width: 16px; height: 32px; position: absolute; bottom: 64px; right: 64px; background-image: url(img/sheet1.png); background-position: 128px 32px;"></div>
-            <div class="sofa" style="width: 32px; height: 16px; position: absolute; bottom: 64px; right: 80px; background-image: url(img/sheet1.png); background-position: 32px 64px;"></div>
+            <div class="vend" style="width: 16px; height: 32px; position: absolute; bottom: 64px; right: 80px; background-image: url(img/sheet1.png); background-position: 128px 32px;"></div>
+            <div class="sofa" style="width: 32px; height: 16px; position: absolute; bottom: 64px; right: 112px; background-image: url(img/sheet1.png); background-position: 32px 64px;"></div>
+            <div class="statsTV" style="width: 32px; height: 16px; position: absolute; bottom: 80px; left: 80px; background-image: url(img/sheet1.png); background-position: 96px 48px;"></div>
         </div>
         <div class="shop" style="display: none; z-index: 10000; position: absolute; background-color: black; width: 512px; height: 512px;">
             <div class="shopDoor" style="width: 256px; height: 512px; position: absolute; background-image: url(img/shop/door.png);">
@@ -40,6 +41,7 @@
                 <div style="width: 64px; height: 512px; position: absolute; right: 0px; background-image: url(img/shop/door.png); background-position: 64px 512px;"></div>
                 <div style="width: 256px; height: 144px; position: absolute; background-image: url(img/shop/door.png);"></div>
                 <div style="width: 256px; height: 336px; position: absolute; bottom: 0px; background-image: url(img/shop/door.png); background-position: 256px 336px;"></div>
+                <div class="note" style="width: 32px; height: 32px; position: absolute; left: 128px; top: 176px; background-image: url(img/sheet1.png); background-position: 32px 96px; display: none;"></div>
             </div>
             <div class="shopImg" style="width: 256px; height: 256px; position: absolute; left: 256px;"></div>
             <div class="shopText" style="width: 256px; height: 256px; position: absolute; left: 256px; top: 256px;"></div>
@@ -58,7 +60,10 @@
                     <div style="width: 16px; height: 16px; background-image: url(img/sheet1.png); background-position: 128px 48px; transform: scaleY(-1) scaleX(-1);"></div>
                 </div>
             </div>
-            <div class="note" style="width: 32px; height: 32px; position: absolute; left: 128px; top: 176px; background-image: url(img/sheet1.png); background-position: 32px 96px; display: none;"></div>
+        </div>
+        <div class="stats" style="display: none; z-index: 10000; position: absolute; background-color: black; width: 512px; height: 512px;">
+            <div class="statText" style="width: 512px; height: 512px;"></div>
+            <div class="statCont" style="width: 512px; height: max-content; position: absolute; bottom: 0px;"></div>
         </div>
         <div class="credits" style="position: absolute; z-index: 100001; width: 512px; height: 512px; display: none;"><div class="creditsText"></div></div>
         <div class="focus" style="position: absolute; z-index: 10000000; width: 512px; height: 512px; background-color: #000000dd; user-select: all; display: block; padding-top: 128px;" onclick="this.style.display = 'none'; music[0].play(); music[1].play()"></div>
@@ -68,10 +73,11 @@
     <div class="loadZoneDeluxe" style="position: absolute; width: 512px; height: 512px; top: calc(50% - 256px); left: calc(50% - 256px); z-index: 1000000; background-color: black; display: block;" onclick="if (loaded >= (toload-(mobile*10))){this.style.display = 'none'}">
         <div class="loadText" style="width: 512px; margin-top: 128px;"></div>
         <div src="img/logo.png" style="margin: auto; width: 128px; height: 64px; background-image: url(img/logo.png); margin-top: 64px;"></div>
+        <div class="loadReset" style="margin: auto; width: max-content; height: max-content; margin-top: 64px;" onclick="localStorage.removeItem('BUTTON'); location.reload()"></div>
     </div>
     <script>
         let loaded = 0
-        let toload = 21
+        let toload = 25
         let loadLoop = setInterval(function(){
             heightText = ""
 
@@ -98,6 +104,10 @@
         <img onload="loaded++" src="img/shop/upgrade/air.png">
         <img onload="loaded++" src="img/shop/upgrade/combo.png">
         <img onload="loaded++" src="img/shop/upgrade/power.png">
+        <img onload="loaded++" src="img/shop/upgrade/carpet.png">
+        <img onload="loaded++" src="img/shop/upgrade/mat.png">
+        <img onload="loaded++" src="img/shop/upgrade/sofa.png">
+        <img onload="loaded++" src="img/shop/upgrade/vending.png">
         <img onload="loaded++" src="img/shop/door.png">
         <img onload="loaded++" src="img/shop/eyes.png">
         <img onload="loaded++" src="img/shop/yourEyes.png">

@@ -11,7 +11,7 @@ if (saveData != null){
     player.countDisp = player.count
 }
 
-if (player.loads == undefined){
+if (player.spent == undefined){
     player = {
         "pos": [252, 1024],
         "vel": [0, -10],
@@ -25,6 +25,7 @@ if (player.loads == undefined){
         "fear": false,
         "loads": 0,
         "spent": 0,
+        "bestCombo": 0,
         "startTime": Date.now(),
         "control": {
             "jump": false,
@@ -146,12 +147,18 @@ function interactPrompt(){
         document.querySelector(".IE").style.display = 'block'
         document.querySelector(".IE").style.left = "132px"
         document.querySelector(".IE").style.bottom = "96px"
+    } else if (player.pos[0] >= 80 && player.pos[0] <= 104){
+        document.querySelector(".IE").style.display = 'block'
+        document.querySelector(".IE").style.left = "92px"
+        document.querySelector(".IE").style.bottom = "96px"
     } else {
         document.querySelector(".IE").style.display = 'none'
     }
 }
 
 document.querySelector(".shopCont").innerHTML = renderStrings(["z to buy   x to leave", "left and right to change items"])
+document.querySelector(".statCont").innerHTML = renderStrings(["x to leave"])
+document.querySelector(".loadReset").innerHTML = renderStrings(["CLICK OR TAP TO", "RESET SAVE GAME"])
 renderItems()
 
 let tick = Date.now()
@@ -168,6 +175,48 @@ setInterval(function(){
     if (player.fear && player.upgrades.combo.active){document.querySelector(".combo").innerHTML = renderString("error   ", font="segment")}
 
     if (document.querySelector(".focus").style.display == 'block'){return}
+
+    if (!document.hasFocus() && !mobile){
+        document.querySelector(".focus").style.display = 'block'
+        music[0].pause()
+        music[1].pause()
+    }
+
+    document.querySelector(".statText").innerHTML = renderStrings(
+        [
+            "",
+            "statistics",
+            "",
+            "power:",
+            String(player.power),
+            "[ the base amount pressing the }",
+            "{button will add to the counter]",
+            "",
+            "spent:",
+            String(player.spent),
+            "[how much you have}",
+            "{spent in the shop]",
+            "",
+            "best combo:",
+            String(player.bestCombo),
+            "[your best combo}",
+            "{  this  cycle  ]",
+            "",
+            "playtime:",
+            renderTime(Date.now()-player.startTime),
+            "[speedrun times are submitted}",
+            "|on the tick when the counter|",
+            "{     surpasses 99999999     ]",
+            "",
+            "loads:",
+            String(player.loads),
+            "[game loads}",
+            "{this cycle]",
+            "",
+            "v" + options.version + " " + ["ONLINE", "OFFLINE"][offline+0]
+        ]
+    )
+
     if (document.querySelector(".loadZoneDeluxe").style.display == 'block'){return}
     if (document.querySelector(".credits").style.display == "block"){return}
 
@@ -211,11 +260,22 @@ setInterval(function(){
         sfx("sfx/ting.mp3", 5)
     }
 
-    if (document.querySelector(".shop").style.display == 'block'){
+    if (document.querySelector(".stats").style.display == 'block'){
+        if (key.x && !held.x){
+            held.x = true
+            document.querySelector(".stats").style.display = 'none'
+        }
+        return
+    } else if (document.querySelector(".shop").style.display == 'block'){
         if (key.x && !held.x){
             held.x = true
             if (player.fear && document.querySelector(".player").style.display == "none"){
                 playCredits()
+                document.querySelector(".touchButtA").style.display = "none"
+                document.querySelector(".touchButtB").style.display = "none"
+                document.querySelector(".touchButtL").style.display = "none"
+                document.querySelector(".touchButtR").style.display = "none"
+                document.querySelector(".IE").style.display = "none"
                 player.pos = [0, 0]
             } else if (player.fear){
                 document.querySelector(".player").style.display = "none"
@@ -231,6 +291,7 @@ setInterval(function(){
                 sfx("sfx/nope.mp3", 25)
             } else if (player.count >= Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1)) && player.shop.cursor == 0){
                 player.count -= Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1))
+                player.spent += Math.floor(((player.power*2)**1.5)/(player.upgrades.mat.unlocked+1))
                 player.power = Math.ceil(player.power*1.1)
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
@@ -239,31 +300,37 @@ setInterval(function(){
                 }
             } else if (player.count >= 50 && player.shop.cursor == 1 && !player.upgrades.combo.unlocked){
                 player.count -= 50
+                player.spent += 50
                 player.upgrades.combo.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 500 && player.shop.cursor == 2 && !player.upgrades.airControl.unlocked){
                 player.count -= 500
+                player.spent += 500
                 player.upgrades.airControl.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 10000 && player.shop.cursor == 3 && !player.upgrades.carpet.unlocked){
                 player.count -= 10000
+                player.spent += 10000
                 player.upgrades.carpet.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
-            } else if (player.count >= 49999 && player.shop.cursor == 4 && !player.upgrades.mat.unlocked){
-                player.count -= 49999
+            } else if (player.count >= 50000 && player.shop.cursor == 4 && !player.upgrades.mat.unlocked){
+                player.count -= 50000
+                player.spent += 50000
                 player.upgrades.mat.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 100000 && player.shop.cursor == 5 && !player.upgrades.sofa.unlocked){
                 player.count -= 100000
+                player.spent += 100000
                 player.upgrades.sofa.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
             } else if (player.count >= 200000 && player.shop.cursor == 6 && !player.upgrades.vending.unlocked){
                 player.count -= 200000
+                player.spent += 200000
                 player.upgrades.vending.unlocked = true
                 sfx("sfx/yeah.mp3", 25)
                 setTimeout(function(){player.countDispTick = true}, 100)
@@ -272,7 +339,9 @@ setInterval(function(){
             }
         }
 
-        if (key.ArrowLeft && !held.ArrowLeft && player.shop.cursor > 0){
+        if (((key.ArrowLeft && !held.ArrowLeft) || (key.ArrowRight && !held.ArrowRight)) && player.fear){
+            sfx("sfx/nope.mp3", 10)
+        } else if (key.ArrowLeft && !held.ArrowLeft && player.shop.cursor > 0){
             held.ArrowLeft = true
             player.shop.cursor--
             sfx("sfx/click.mp3", 10)
@@ -299,7 +368,7 @@ setInterval(function(){
                     break
                 case 1:
                     document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/combo.png)"
-                    document.querySelector(".shopText").innerHTML = renderStrings(["", "it's a jumbed mess of", "cables and machinery", "that looks like it can be", "attached to the counter.", "", "some of the machinery looks", "suspiciously organic", "maybe something down here", "likes making sick and", "twisted machines?"])
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "it's a jumbled mess of", "cables and machinery", "that looks like it can be", "attached to the counter.", "", "some of the machinery looks", "suspiciously organic", "maybe something down here", "likes making sick and", "twisted machines?"])
                     if (!player.upgrades.combo.unlocked){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["combo meter", "fer 50"])
                     } else {
@@ -308,7 +377,7 @@ setInterval(function(){
                     break
                 case 2:
                     document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/air.png)"
-                    document.querySelector(".shopText").innerHTML = renderStrings(["", "neither me nor the", "shopkeep knows how it works", "", "but it does work... right?"])
+                    document.querySelector(".shopText").innerHTML = renderStrings(["", "air control... somehow...", "", "neither me nor the", "shopkeep knows how it works", "", "but it does work... right?"])
                     if (!player.upgrades.airControl.unlocked){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["air control", "fer 500"])
                     } else {
@@ -316,7 +385,7 @@ setInterval(function(){
                     }
                     break
                 case 3:
-                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/carpet.png)"
                     document.querySelector(".shopText").innerHTML = renderStrings(["", "a pair of old fancy carpets.", "", "they look like they'll", "stop me bouncing about", "when i land.", "", "i think i had one", "like this at home."])
                     if (!player.upgrades.carpet.unlocked){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["carpet", "fer 10000"])
@@ -325,16 +394,16 @@ setInterval(function(){
                     }
                     break
                 case 4:
-                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/mat.png)"
                     document.querySelector(".shopText").innerHTML = renderStrings(["", "an old welcome mat.", "", "the shopkeep said that they'll", "give half price power upgrades", "if i buy this...", "", "does the counter even have", "any monetary value?"])
                     if (!player.upgrades.mat.unlocked){
-                        document.querySelector(".shopTalk").innerHTML = renderStrings(["welcome mat", "fer 49999"])
+                        document.querySelector(".shopTalk").innerHTML = renderStrings(["welcome mat", "fer 50000"])
                     } else {
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["yer already", "bought me", "welcome mat"])
                     }
                     break
                 case 5:
-                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/sofa.png)"
                     document.querySelector(".shopText").innerHTML = renderStrings(["", "an old sofa.", "it's similar to the ones", "i'd see in the charity shops", "back in... in...", "", "i hit my head pretty hard.", "i'll remember in due time.", "", "knowing there's somewhere", "to sit down and rest", "will motivate me to", "hit the button harder!"])
                     if (!player.upgrades.sofa.unlocked){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["fancy sofa", "fer 100000"])
@@ -343,7 +412,7 @@ setInterval(function(){
                     }
                     break
                 case 6:
-                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/woke.png)"
+                    document.querySelector(".shopImg").style.backgroundImage = "url(img/shop/upgrade/vending.png)"
                     document.querySelector(".shopText").innerHTML = renderStrings(["", "an old vending machine.", "the power cable is busted.", "", "the idea of being able to have a", "nice drink, (even if not cold)", "is a nice motivator for me to", "hit the button even harder!", "", "i have no idea what the hell", "\"dr. pipis\" is though.", "shopkeep says it's good."])
                     if (!player.upgrades.vending.unlocked){
                         document.querySelector(".shopTalk").innerHTML = renderStrings(["vending machine", "fer 200000"])
@@ -352,6 +421,8 @@ setInterval(function(){
                     }
                     break
             }
+        } else {
+            document.querySelector(".shopImg").style.display = "none"
         }
 
         if (player.fear && document.querySelector(".player").style.display != "none"){
@@ -425,6 +496,10 @@ setInterval(function(){
         held.x = true
         document.querySelector(".shop").style.display = 'block'
         lastblink = Date.now()
+    } else if (key.x && !held.x && player.pos[0] >= 80 && player.pos[0] <= 104 && player.pos[1] == 64){
+        held.x = true
+        document.querySelector(".stats").style.display = 'block'
+        lastblink = Date.now()
     } else if (key.x && !held.x && player.pos[0] > 216 && player.pos[0] < 288 && player.upgrades.combo.unlocked){
         held.x = true
         player.upgrades.combo.active = !player.upgrades.combo.active
@@ -487,13 +562,21 @@ setInterval(function(){
         player.button.depth = 7
         player.button.vel = -player.button.vel
 
-        let damage = Math.floor(player.power*(((player.combo**1.1)/5)+1))
+        let damage = Math.ceil(player.power*(((player.combo**1.1)/5)+1))
         if (player.upgrades.vending.unlocked){damage*=2}
         if (player.upgrades.sofa.unlocked){damage*=2}
 
         sfx("sfx/click.mp3", 50)
         if (player.upgrades.combo.unlocked && player.upgrades.combo.active){
             player.combo++
+            if (player.bestCombo == undefined){
+                player.bestCombo = 0
+            }
+
+            if (player.combo > player.bestCombo){
+                player.bestCombo = player.combo
+            }
+
             if (player.combo >= 99){
                 player.combo = 99
                 unlockMedal(82757)
@@ -675,12 +758,6 @@ setInterval(function(){
 
     if (!player.fear){
         localStorage.setItem("BUTTON", JSON.stringify(player))
-    }
-
-    if (!document.hasFocus() && !mobile){
-        document.querySelector(".focus").style.display = 'block'
-        music[0].pause()
-        music[1].pause()
     }
 }, 1000/60)
 
